@@ -10,12 +10,22 @@ const createCar = async (req: Request, res: Response) => {
       success: true,
       data: result,
     });
-  } catch (error: any) {
-    res.status(500).json({
-      message: error.message || "Failed to create a Car",
-      success: false,
-      error: error,
-    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // Handle known error types
+      res.status(500).json({
+        message: error.message,
+        success: false,
+        error: error.stack,
+      });
+    } else {
+      // Handle unknown error types
+      res.status(500).json({
+        message: "An unknown error occurred",
+        success: false,
+        error: error,
+      });
+    }
   }
 };
 
@@ -27,16 +37,55 @@ const getAllCars = async (req: Request, res: Response) => {
       status: true,
       data: result,
     });
-  } catch (error: any) {
-    res.status(500).json({
-      message: error.message || "Failed to get all Cars",
-      success: false,
-      error: error,
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // Handle known error types
+      res.status(500).json({
+        message: error.message,
+        success: false,
+        error: error.stack,
+      });
+    } else {
+      // Handle unknown error types
+      res.status(500).json({
+        message: "An unknown error occurred",
+        success: false,
+        error: error,
+      });
+    }
+  }
+};
+
+const getSingleCar = async (req: Request, res: Response) => {
+  try {
+    const { carId } = req.params;
+    const result = await CarServices.getSingleCarFromDB(carId);
+    res.json({
+      message: "Car retrieved successfully",
+      status: true,
+      data: result,
     });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // handle known error types
+      res.status(500).json({
+        message: error.message,
+        success: false,
+        error: error.stack,
+      });
+    } else {
+      // Handle unknown error types
+      res.status(500).json({
+        message: "An unknown error occurred",
+        success: false,
+        error: error,
+      });
+    }
   }
 };
 
 export const CarControllers = {
   createCar,
   getAllCars,
+  getSingleCar,
 };

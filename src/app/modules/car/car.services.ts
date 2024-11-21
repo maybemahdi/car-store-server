@@ -22,7 +22,13 @@ const getCarsFromDB = async (req: Request) => {
   return result;
 };
 
+const getSingleCarFromDB = async (carId: string) => {
+  const result = await Car.findOne({ _id: carId });
+  return result;
+};
+
 export const CarServices = {
   createCarIntoDB,
   getCarsFromDB,
+  getSingleCarFromDB,
 };
