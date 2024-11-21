@@ -20,7 +20,11 @@ const CarSchema = new Schema<ICar>(
       required: [true, "Category is Required"],
     },
     description: { type: String, required: [true, "Description is Required"] },
-    quantity: { type: Number, required: [true, "Quantity is Required"] },
+    quantity: {
+      type: Number,
+      min: [0, "Quantity must be a positive number"],
+      required: [true, "Quantity is Required"],
+    },
     inStock: { type: Boolean, required: [true, "In Stock is Required"] },
   },
   { timestamps: true },

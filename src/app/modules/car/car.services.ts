@@ -7,8 +7,7 @@ const createCarIntoDB = async (carData: ICar) => {
   return result;
 };
 
-const getCarsFromDB = async (req: Request) => {
-  const { searchTerm } = req.query;
+const getCarsFromDB = async (searchTerm: string) => {
   let filter = {};
   if (searchTerm) {
     // Create a regex to perform case-insensitive search for any matching field
@@ -27,8 +26,20 @@ const getSingleCarFromDB = async (carId: string) => {
   return result;
 };
 
+const updateCarInDB = async (carId: string, updateData: ICar) => {
+  const result = await Car.findByIdAndUpdate(carId, updateData, { new: true });
+  return result;
+};
+
+const deleteCarInDB = async (carId: string) => {
+  const result = await Car.findByIdAndDelete(carId);
+  return result;
+};
+
 export const CarServices = {
   createCarIntoDB,
   getCarsFromDB,
   getSingleCarFromDB,
+  updateCarInDB,
+  deleteCarInDB,
 };

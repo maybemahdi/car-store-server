@@ -31,7 +31,8 @@ const createCar = async (req: Request, res: Response) => {
 
 const getAllCars = async (req: Request, res: Response) => {
   try {
-    const result = await CarServices.getCarsFromDB(req);
+    const { searchTerm } = req.query;
+    const result = await CarServices.getCarsFromDB(searchTerm as string);
     res.json({
       message: "Cars retrieved successfully",
       status: true,
@@ -84,8 +85,67 @@ const getSingleCar = async (req: Request, res: Response) => {
   }
 };
 
+const updateCar = async (req: Request, res: Response) => {
+  try {
+    const { carId } = req.params;
+    const updateData = req.body;
+    const result = await CarServices.updateCarInDB(carId, updateData);
+    res.json({
+      message: "Car updated successfully",
+      status: true,
+      data: result,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // handle known error types
+      res.status(500).json({
+        message: error.message,
+        success: false,
+        error: error.stack,
+      });
+    } else {
+      // Handle unknown error types
+      res.status(500).json({
+        message: "An unknown error occurred",
+        success: false,
+        error: error,
+      });
+    }
+  }
+};
+
+const deleteCar = async (req: Request, res: Response) => {
+  try {
+    const { carId } = req.params;
+    await CarServices.deleteCarInDB(carId);
+    res.json({
+      message: "Car deleted successfully",
+      status: true,
+      data: {},
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // handle known error types
+      res.status(500).json({
+        message: error.message,
+        success: false,
+        error: error.stack,
+      });
+    } else {
+      // Handle unknown error types
+      res.status(500).json({
+        message: "An unknown error occurred",
+        success: false,
+        error: error,
+      });
+    }
+  }
+};
+
 export const CarControllers = {
   createCar,
   getAllCars,
   getSingleCar,
+  updateCar,
+  deleteCar,
 };
