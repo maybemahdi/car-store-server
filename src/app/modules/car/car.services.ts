@@ -1,4 +1,3 @@
-import { Request } from "express";
 import { ICar } from "./car.interface";
 import { Car } from "./car.model";
 

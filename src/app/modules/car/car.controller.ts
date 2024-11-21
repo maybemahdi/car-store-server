@@ -16,7 +16,8 @@ const createCar = async (req: Request, res: Response) => {
       res.status(500).json({
         message: error.message,
         success: false,
-        error: error.stack,
+        error: error,
+        stack: error.stack,
       });
     } else {
       // Handle unknown error types
@@ -44,7 +45,8 @@ const getAllCars = async (req: Request, res: Response) => {
       res.status(500).json({
         message: error.message,
         success: false,
-        error: error.stack,
+        error: error,
+        stack: error.stack,
       });
     } else {
       // Handle unknown error types
@@ -72,7 +74,8 @@ const getSingleCar = async (req: Request, res: Response) => {
       res.status(500).json({
         message: error.message,
         success: false,
-        error: error.stack,
+        error: error,
+        stack: error.stack,
       });
     } else {
       // Handle unknown error types
@@ -101,7 +104,8 @@ const updateCar = async (req: Request, res: Response) => {
       res.status(500).json({
         message: error.message,
         success: false,
-        error: error.stack,
+        error: error,
+        stack: error.stack,
       });
     } else {
       // Handle unknown error types
@@ -129,7 +133,8 @@ const deleteCar = async (req: Request, res: Response) => {
       res.status(500).json({
         message: error.message,
         success: false,
-        error: error.stack,
+        error: error,
+        stack: error.stack,
       });
     } else {
       // Handle unknown error types
