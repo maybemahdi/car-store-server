@@ -26,7 +26,14 @@ const getSingleCarFromDB = async (carId: string) => {
 };
 
 const updateCarInDB = async (carId: string, updateData: ICar) => {
-  const result = await Car.findByIdAndUpdate(carId, updateData, { new: true });
+  const result = await Car.findByIdAndUpdate(
+    carId,
+    {
+      ...updateData,
+      inStock: updateData.quantity !== undefined && updateData.quantity > 0,
+    },
+    { new: true },
+  );
   return result;
 };
 

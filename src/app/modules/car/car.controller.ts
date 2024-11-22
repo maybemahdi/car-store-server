@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { CarServices } from "./car.services";
+import { ICar } from "./car.interface";
 
 const createCar = async (req: Request, res: Response) => {
   try {
-    const carData = req.body;
+    const carData: ICar = req.body;
     const result = await CarServices.createCarIntoDB(carData);
     res.json({
       message: "Car created successfully",
