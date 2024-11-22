@@ -12,14 +12,40 @@ const orderCar = async (req: Request, res: Response) => {
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.json({
-        message: "An Unknown Error Occurred",
+        message: "Error Occurred",
         status: false,
         error: error,
         stack: error.stack,
       });
     } else {
       res.json({
-        message: "An Unknown Error Occurred",
+        message: "Error Occurred",
+        status: false,
+        error: error,
+      });
+    }
+  }
+};
+
+const getTotalRevenue = async (req: Request, res: Response) => {
+  try {
+    const result = await OrderServices.getTotalRevenue();
+    res.json({
+      message: "Revenue calculated successfully",
+      status: true,
+      data: result,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.json({
+        message: "Error Occurred",
+        status: false,
+        error: error,
+        stack: error.stack,
+      });
+    } else {
+      res.json({
+        message: "Error Occurred",
         status: false,
         error: error,
       });
@@ -29,4 +55,5 @@ const orderCar = async (req: Request, res: Response) => {
 
 export const OrderControllers = {
   orderCar,
+  getTotalRevenue,
 };

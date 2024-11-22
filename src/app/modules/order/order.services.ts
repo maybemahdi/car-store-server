@@ -4,9 +4,11 @@ import { Order } from "./order.model";
 
 const orderCar = async (orderData: IOrder) => {
   const car = await Car.findById(orderData.car);
+
   if (!car) {
     return { status: false, message: "Car not found." };
   }
+
   if (car.quantity < orderData.quantity) {
     return {
       status: false,
@@ -21,13 +23,12 @@ const orderCar = async (orderData: IOrder) => {
     };
   }
 
+  const newOrder = await Order.create(orderData);
+
   car.quantity -= orderData.quantity;
-  if (car.quantity === 0) {
-    car.inStock = false;
-  }
+  car.inStock = car.quantity > 0;
   await car.save();
 
-  const newOrder = await Order.create(orderData);
   return {
     message: "Order created successfully",
     status: true,
@@ -35,6 +36,19 @@ const orderCar = async (orderData: IOrder) => {
   };
 };
 
+const getTotalRevenue = async () => {
+  const result = await Order.aggregate([
+    {
+      $group: { _id: null, totalRevenue: { $sum: "$totalPrice" } },
+    },
+    {
+      $project: { _id: 0 },
+    },
+  ]);
+  return result[0];
+};
+
 export const OrderServices = {
   orderCar,
+  getTotalRevenue,
 };
