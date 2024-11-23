@@ -37,7 +37,7 @@ const getAllCars = async (req: Request, res: Response) => {
     const result = await CarServices.getCarsFromDB(searchTerm as string);
     if (result.length < 1) {
       res.status(404).json({
-        message: "No Can Exists in Database",
+        message: "No Car Exists in Database",
         status: false,
         data: result,
       });
