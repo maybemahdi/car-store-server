@@ -108,6 +108,13 @@ const updateCar = async (req: Request, res: Response) => {
     const { carId } = req.params;
     const updateData = req.body;
     const result = await CarServices.updateCarInDB(carId, updateData);
+    if (!result) {
+      res.status(404).json({
+        message: "No Car found for this ID",
+        status: false,
+        data: result,
+      });
+    }
     res.json({
       message: "Car updated successfully",
       status: true,
