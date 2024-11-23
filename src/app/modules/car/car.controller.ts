@@ -143,7 +143,14 @@ const updateCar = async (req: Request, res: Response) => {
 const deleteCar = async (req: Request, res: Response) => {
   try {
     const { carId } = req.params;
-    await CarServices.deleteCarInDB(carId);
+    const result = await CarServices.deleteCarInDB(carId);
+    if (!result) {
+      res.status(404).json({
+        message: "No car found in database by this id",
+        status: false,
+        data: {},
+      });
+    }
     res.json({
       message: "Car deleted successfully",
       status: true,
