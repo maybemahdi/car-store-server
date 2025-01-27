@@ -33,15 +33,8 @@ const createCar = async (req: Request, res: Response) => {
 
 const getAllCars = async (req: Request, res: Response) => {
   try {
-    const { searchTerm } = req.query;
-    const result = await CarServices.getCarsFromDB(searchTerm as string);
-    if (result.length < 1) {
-      res.status(404).json({
-        message: "No Car Exists in Database",
-        status: false,
-        data: result,
-      });
-    }
+    // const { searchTerm } = req.query;
+    const result = await CarServices.getCarsFromDB(req.query);
     res.status(200).json({
       message: "Cars retrieved successfully",
       status: true,

@@ -1,3 +1,4 @@
+import QueryBuilder from "../../builder/QueryBuilder";
 import { ICar } from "./car.interface";
 import { Car } from "./car.model";
 
@@ -6,17 +7,12 @@ const createCarIntoDB = async (carData: ICar) => {
   return result;
 };
 
-const getCarsFromDB = async (searchTerm: string) => {
-  let filter = {};
-  if (searchTerm) {
-    // Create a regex to perform case-insensitive search for any matching field
-    const regex = new RegExp(searchTerm as string, "i");
+const getCarsFromDB = async (query: Record<string, unknown>) => {
+  const carsQuery = new QueryBuilder(Car.find(), query)
+    .search(["brand", "model", "category", "availability"])
+    .filter();
 
-    filter = {
-      $or: [{ brand: regex }, { model: regex }, { category: regex }],
-    };
-  }
-  const result = await Car.find(filter);
+  const result = await carsQuery.modelQuery;
   return result;
 };
 
