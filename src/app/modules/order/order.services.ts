@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Car } from "../car/car.model";
 import { IOrder } from "./order.interface";
 import { Order } from "./order.model";
+import { orderUtils } from "./order.utils";
 
-const orderCar = async (orderData: IOrder) => {
+const orderCar = async (orderData: IOrder, user: any, client_ip: string) => {
   const car = await Car.findById(orderData.car);
 
   if (!car) {
@@ -23,17 +25,73 @@ const orderCar = async (orderData: IOrder) => {
     };
   }
 
-  const newOrder = await Order.create(orderData);
+  let newOrder = await Order.create({ ...orderData, userId: user.id });
 
   car.quantity -= orderData.quantity;
   car.inStock = car.quantity > 0;
   await car.save();
 
-  return {
-    message: "Order created successfully",
-    status: true,
-    data: newOrder,
+  // payment integration
+  const shurjopayPayload = {
+    amount: orderData.totalPrice,
+    order_id: newOrder._id,
+    currency: "BDT",
+    customer_name: user.name,
+    customer_address: orderData.address,
+    customer_email: user.email,
+    customer_phone: orderData.phone,
+    customer_city: user.city || "Dhaka",
+    client_ip,
   };
+
+  const payment = await orderUtils.makePaymentAsync(shurjopayPayload);
+
+  if (payment?.transactionStatus) {
+    newOrder = await newOrder.updateOne({
+      transaction: {
+        id: payment.sp_order_id,
+        transactionStatus: payment.transactionStatus,
+      },
+    });
+  }
+
+  return payment.checkout_url;
+
+  // return {
+  //   message: "Order created successfully",
+  //   status: true,
+  //   data: newOrder,
+  // };
+};
+
+const verifyPayment = async (order_id: string) => {
+  const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id);
+
+  if (verifiedPayment.length) {
+    await Order.findOneAndUpdate(
+      {
+        "transaction.id": order_id,
+      },
+      {
+        "transaction.bank_status": verifiedPayment[0].bank_status,
+        "transaction.sp_code": verifiedPayment[0].sp_code,
+        "transaction.sp_message": verifiedPayment[0].sp_message,
+        "transaction.transactionStatus": verifiedPayment[0].transaction_status,
+        "transaction.method": verifiedPayment[0].method,
+        "transaction.date_time": verifiedPayment[0].date_time,
+        status:
+          verifiedPayment[0].bank_status == "Success"
+            ? "Paid"
+            : verifiedPayment[0].bank_status == "Failed"
+              ? "Pending"
+              : verifiedPayment[0].bank_status == "Cancel"
+                ? "Cancelled"
+                : "",
+      },
+    );
+  }
+
+  return verifiedPayment;
 };
 
 const getTotalRevenue = async () => {
@@ -50,5 +108,6 @@ const getTotalRevenue = async () => {
 
 export const OrderServices = {
   orderCar,
+  verifyPayment,
   getTotalRevenue,
 };

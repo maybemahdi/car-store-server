@@ -16,7 +16,7 @@ const registerUser = catchAsync(async (req, res) => {
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthService.loginUser(req.body);
-  const { accessToken, email, role } = result;
+  const { accessToken, email, role, name, id } = result;
 
   // Expire the previous token if it exists
   if (req.cookies.token) {
@@ -33,6 +33,8 @@ const loginUser = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     message: "Login successful",
     data: {
+      id,
+      name,
       email,
       role,
       token: accessToken,

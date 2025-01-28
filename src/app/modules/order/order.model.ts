@@ -3,6 +3,10 @@ import { IOrder } from "./order.interface";
 
 const OrderSchema: Schema = new Schema<IOrder>(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     email: {
       type: String,
       required: [true, "Please Provide your Email"],
@@ -29,6 +33,28 @@ const OrderSchema: Schema = new Schema<IOrder>(
       type: Number,
       required: [true, "Total Price is Required"],
       min: [0, "Total price must be at least 0"],
+    },
+    address: {
+      type: String,
+      required: [true, "Address is Required"],
+    },
+    phone: {
+      type: String,
+      required: [true, "Phone is Required"],
+    },
+    status: {
+      type: String,
+      enum: ["Pending", "Paid", "Shipped", "Completed", "Cancelled"],
+      default: "Pending",
+    },
+    transaction: {
+      id: String,
+      transactionStatus: String,
+      bank_status: String,
+      sp_code: String,
+      sp_message: String,
+      method: String,
+      date_time: String,
     },
   },
   { timestamps: true },

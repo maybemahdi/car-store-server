@@ -37,6 +37,8 @@ const loginUser = async (payload: ILoginUser) => {
   //create token and sent to the  client
 
   const jwtPayload = {
+    id: user._id,
+    name: user.name,
     email: user.email,
     role: user.role as string,
   };
@@ -48,6 +50,8 @@ const loginUser = async (payload: ILoginUser) => {
   );
 
   return {
+    id: user._id,
+    name: user.name,
     email: user.email,
     role: user.role as string,
     accessToken,

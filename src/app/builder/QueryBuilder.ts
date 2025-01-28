@@ -35,6 +35,25 @@ class QueryBuilder<T> {
       queryObj.inStock = queryObj.availability === "inStock";
       delete queryObj["availability"];
     }
+    // Handle priceRange
+     if (queryObj.priceRange) {
+       // Ensure priceRange is a string and split into an array
+       if (typeof queryObj.priceRange === "string") {
+         const [min, max] = queryObj.priceRange.split(",").map(Number);
+
+         // Explicitly initialize price as an object
+         queryObj.price = {} as { $gte?: number; $lte?: number };
+
+         if (!isNaN(min)) {
+           (queryObj.price as { $gte?: number }).$gte = min;
+         }
+         if (!isNaN(max)) {
+           (queryObj.price as { $lte?: number }).$lte = max;
+         }
+       }
+       delete queryObj.priceRange; // Clean up after mapping
+     }
+
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
     return this;
   }
