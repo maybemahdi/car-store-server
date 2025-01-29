@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import AppError from "../../errors/AppError";
 import { Car } from "../car/car.model";
+import { User } from "../user/user.model";
 import { IOrder } from "./order.interface";
 import { Order } from "./order.model";
 import { orderUtils } from "./order.utils";
+import httpStatus from "http-status";
 
 const orderCar = async (orderData: IOrder, user: any, client_ip: string) => {
   const car = await Car.findById(orderData.car);
@@ -106,8 +109,31 @@ const getTotalRevenue = async () => {
   return result[0];
 };
 
+const getOrdersByCustomer = async (id: string) => {
+  const isCustomerExist = await User.findById(id);
+  if (!isCustomerExist) {
+    throw new AppError(httpStatus.FORBIDDEN, "You are not authorized!");
+  }
+  const result = await Order.find({ userId: id }).populate({
+    path: "car",
+    model: Car,
+  });
+  return {
+    data: result,
+  };
+};
+
+const getAllOrders = async () => {
+  const result = await Order.find();
+  return {
+    data: result,
+  };
+};
+
 export const OrderServices = {
   orderCar,
   verifyPayment,
   getTotalRevenue,
+  getOrdersByCustomer,
+  getAllOrders,
 };

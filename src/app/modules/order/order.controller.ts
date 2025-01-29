@@ -3,6 +3,7 @@ import { IOrder } from "./order.interface";
 import { OrderServices } from "./order.services";
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
 
 const orderCar = async (req: Request, res: Response) => {
   try {
@@ -12,7 +13,10 @@ const orderCar = async (req: Request, res: Response) => {
     res.json({
       success: true,
       statusCode: httpStatus.CREATED,
-      message: typeof result === 'object' && 'message' in result ? result.message : "Order placed successfully",
+      message:
+        typeof result === "object" && "message" in result
+          ? result.message
+          : "Order placed successfully",
       data: result,
     });
   } catch (error: unknown) {
@@ -36,11 +40,11 @@ const orderCar = async (req: Request, res: Response) => {
 const verifyPayment = catchAsync(async (req, res) => {
   const order = await OrderServices.verifyPayment(req.query.order_id as string);
 
- res.json({
-   statusCode: httpStatus.CREATED,
-   message: "Order verified successfully",
-   data: order,
- });
+  res.json({
+    statusCode: httpStatus.CREATED,
+    message: "Order verified successfully",
+    data: order,
+  });
 });
 
 const getTotalRevenue = async (req: Request, res: Response) => {
@@ -69,8 +73,31 @@ const getTotalRevenue = async (req: Request, res: Response) => {
   }
 };
 
+const getOrdersByCustomer = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await OrderServices.getOrdersByCustomer(id);
+  sendResponse(res, {
+    success: true,
+    message: "Orders Retrieved Successfully",
+    statusCode: httpStatus.OK,
+    data: result.data,
+  });
+});
+
+const getAllOrders = catchAsync(async (req, res) => {
+  const result = await OrderServices.getAllOrders();
+  sendResponse(res, {
+    success: true,
+    message: "Orders Retrieved Successfully",
+    statusCode: httpStatus.OK,
+    data: result.data,
+  });
+});
+
 export const OrderControllers = {
   orderCar,
   getTotalRevenue,
   verifyPayment,
+  getOrdersByCustomer,
+  getAllOrders,
 };

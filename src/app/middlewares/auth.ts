@@ -31,7 +31,7 @@ const auth = (...requiredRoles: IUserRole[]) => {
     const user = await User.isUserExistsByCustomEmail(email);
 
     if (!user) {
-      throw new AppError(httpStatus.NOT_FOUND, "This user is not found!");
+      throw new AppError(httpStatus.NOT_FOUND, "User not found!");
     }
 
     // const isBlocked = user?.isBlocked;

@@ -60,19 +60,5 @@ const OrderSchema: Schema = new Schema<IOrder>(
   { timestamps: true },
 );
 
-OrderSchema.set("toJSON", {
-  transform: (_doc, ret) => {
-    delete ret.__v;
-    return {
-      _id: ret._id,
-      email: ret._id,
-      car: ret.car,
-      quantity: ret.quantity,
-      totalPrice: ret.totalPrice,
-      createdAt: ret.createdAt,
-      updatedAt: ret.updatedAt,
-    };
-  },
-});
 
 export const Order = model<IOrder>("Order", OrderSchema);

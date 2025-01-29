@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AppError from "../../errors/AppError";
 import { User } from "../user/user.model";
 import { ILoginUser, IRegisterUser } from "./auth.interface";
@@ -58,7 +59,42 @@ const loginUser = async (payload: ILoginUser) => {
   };
 };
 
+const changePassword = async (
+  payload: {
+    currentPassword: string;
+    newPassword: string;
+  },
+  user: any,
+) => {
+  const { currentPassword, newPassword } = payload;
+  const userForCheck = await User.findById(user?.id).select("+password");
+  // Check if the current password matches
+  if (!userForCheck?.password) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "Password not found");
+  }
+  const isPasswordMatched = await User.isPasswordMatched(
+    currentPassword,
+    userForCheck.password,
+  );
+  if (!isPasswordMatched) {
+    return {
+      success: false,
+      message: "Current password is incorrect"
+    }
+  }
+
+  // Update the password
+  userForCheck.password = newPassword;
+  await userForCheck.save();
+
+  return {
+    success: true,
+    message: "Password changed successfully",
+  };
+};
+
 export const AuthService = {
   registerUserIntoDB,
   loginUser,
+  changePassword,
 };
