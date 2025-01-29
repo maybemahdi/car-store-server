@@ -13,7 +13,11 @@ const app: Application = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests from your Vite app
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://car-shop-frontend-lilac.vercel.app",
+    ], // Allow requests from your Vite app
     methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods if necessary
     credentials: true, // If you're using cookies or HTTP authentication
   }),

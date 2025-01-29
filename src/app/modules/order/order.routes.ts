@@ -5,7 +5,7 @@ import auth from "../../middlewares/auth";
 const OrderRoutes = Router();
 
 OrderRoutes.post("/", auth("user", "admin"), OrderControllers.orderCar);
-OrderRoutes.get("/verify", auth("user"), OrderControllers.verifyPayment);
+OrderRoutes.get("/verify", auth("user", "admin"), OrderControllers.verifyPayment);
 OrderRoutes.get("/revenue", OrderControllers.getTotalRevenue);
 OrderRoutes.get("/:id", OrderControllers.getOrdersByCustomer);
 OrderRoutes.get("/", OrderControllers.getAllOrders);
