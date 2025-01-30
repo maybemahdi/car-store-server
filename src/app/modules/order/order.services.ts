@@ -124,10 +124,32 @@ const getOrdersByCustomer = async (id: string) => {
 };
 
 const getAllOrders = async () => {
-  const result = await Order.find();
+  const result = await Order.find().populate({
+    path: "car",
+    model: Car,
+  });
   return {
     data: result,
   };
+};
+
+const updateShippingStatus = async (payload: {
+  id: string;
+  shippingStatus: string;
+}) => {
+  const result = await Order.findByIdAndUpdate(
+    payload?.id,
+    {
+      shippingStatus: payload.shippingStatus,
+    },
+    { new: true },
+  );
+  
+  if(!result){
+    throw new AppError(httpStatus.NOT_FOUND, "Something went wrong!")
+  }
+
+  return result;
 };
 
 export const OrderServices = {
@@ -136,4 +158,5 @@ export const OrderServices = {
   getTotalRevenue,
   getOrdersByCustomer,
   getAllOrders,
+  updateShippingStatus,
 };

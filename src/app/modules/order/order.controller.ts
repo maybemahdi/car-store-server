@@ -94,10 +94,21 @@ const getAllOrders = catchAsync(async (req, res) => {
   });
 });
 
+const updateShippingStatus = catchAsync(async (req, res) => {
+  const result = await OrderServices.updateShippingStatus(req.body);
+  sendResponse(res, {
+    success: true,
+    message: "Shipping Status Updated",
+    statusCode: httpStatus.OK,
+    data: result,
+  });
+});
+
 export const OrderControllers = {
   orderCar,
   getTotalRevenue,
   verifyPayment,
   getOrdersByCustomer,
   getAllOrders,
+  updateShippingStatus,
 };

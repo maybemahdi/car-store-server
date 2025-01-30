@@ -18,4 +18,5 @@ export interface IOrder {
     method: string;
     date_time: string;
   };
+  shippingStatus?: "Pending" | "Processing" | "Shipped" | "Delivered";
 }

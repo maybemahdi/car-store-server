@@ -79,8 +79,8 @@ const changePassword = async (
   if (!isPasswordMatched) {
     return {
       success: false,
-      message: "Current password is incorrect"
-    }
+      message: "Current password is incorrect",
+    };
   }
 
   // Update the password
@@ -93,8 +93,21 @@ const changePassword = async (
   };
 };
 
+const updatedUserStatus = async (payload: { id: string; status: boolean }) => {
+  const result = await User.findByIdAndUpdate(
+    payload.id,
+    { isBlocked: payload.status },
+    { new: true },
+  );
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, "Something went wrong!");
+  }
+  return result;
+};
+
 export const AuthService = {
   registerUserIntoDB,
   loginUser,
   changePassword,
+  updatedUserStatus,
 };

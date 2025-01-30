@@ -18,8 +18,13 @@ AuthRoutes.post(
 );
 AuthRoutes.post(
   "/change-password",
-  auth("user"),
+  auth("user", "admin"),
   AuthController.changePassword,
+);
+AuthRoutes.patch(
+  "/update-user-status",
+  auth("admin"),
+  AuthController.updatedUserStatus,
 );
 
 export default AuthRoutes;

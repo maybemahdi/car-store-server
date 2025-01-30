@@ -51,8 +51,20 @@ const changePassword = catchAsync(async (req, res) => {
   });
 });
 
+const updatedUserStatus = catchAsync(async (req, res) => {
+  const payload = req?.body;
+  const result = await AuthService.updatedUserStatus(payload);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: `User is ${payload?.status ? "Blocked" : "Active"} now`,
+    data: result,
+  });
+});
+
 export const AuthController = {
   registerUser,
   loginUser,
   changePassword,
+  updatedUserStatus,
 };

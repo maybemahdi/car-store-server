@@ -10,7 +10,9 @@ const createCarIntoDB = async (carData: ICar) => {
 const getCarsFromDB = async (query: Record<string, unknown>) => {
   const carsQuery = new QueryBuilder(Car.find(), query)
     .search(["brand", "model", "category", "availability"])
-    .filter();
+    .filter()
+    .sort()
+    .paginate();
 
   const result = await carsQuery.modelQuery;
   return result;

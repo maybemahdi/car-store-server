@@ -32,8 +32,6 @@ const UserSchema = new Schema<IUser, UserModel>(
 UserSchema.set("toJSON", {
   transform: (doc, ret) => {
     delete ret.__v;
-    delete ret.createdAt;
-    delete ret.updatedAt;
   },
 });
 

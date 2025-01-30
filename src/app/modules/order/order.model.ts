@@ -56,6 +56,11 @@ const OrderSchema: Schema = new Schema<IOrder>(
       method: String,
       date_time: String,
     },
+    shippingStatus: {
+      type: String,
+      enum: ["Pending" , "Processing" , "Shipped", "Delivered"],
+      default: "Pending"
+    }
   },
   { timestamps: true },
 );

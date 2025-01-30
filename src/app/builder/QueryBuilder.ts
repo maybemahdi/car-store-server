@@ -23,7 +23,7 @@ class QueryBuilder<T> {
 
   filter() {
     const queryObj = { ...this.query };
-    const excludeFields = ["searchTerm", "sortBy", "sortOrder"];
+    const excludeFields = ["searchTerm", "sortBy", "sortOrder", "limit"];
     // Remove exclude fields and any null or undefined values
     excludeFields.forEach((el) => delete queryObj[el]);
     Object.keys(queryObj).forEach((key) => {
@@ -36,34 +36,45 @@ class QueryBuilder<T> {
       delete queryObj["availability"];
     }
     // Handle priceRange
-     if (queryObj.priceRange) {
-       // Ensure priceRange is a string and split into an array
-       if (typeof queryObj.priceRange === "string") {
-         const [min, max] = queryObj.priceRange.split(",").map(Number);
+    if (queryObj.priceRange) {
+      // Ensure priceRange is a string and split into an array
+      if (typeof queryObj.priceRange === "string") {
+        const [min, max] = queryObj.priceRange.split(",").map(Number);
 
-         // Explicitly initialize price as an object
-         queryObj.price = {} as { $gte?: number; $lte?: number };
+        // Explicitly initialize price as an object
+        queryObj.price = {} as { $gte?: number; $lte?: number };
 
-         if (!isNaN(min)) {
-           (queryObj.price as { $gte?: number }).$gte = min;
-         }
-         if (!isNaN(max)) {
-           (queryObj.price as { $lte?: number }).$lte = max;
-         }
-       }
-       delete queryObj.priceRange; // Clean up after mapping
-     }
+        if (!isNaN(min)) {
+          (queryObj.price as { $gte?: number }).$gte = min;
+        }
+        if (!isNaN(max)) {
+          (queryObj.price as { $lte?: number }).$lte = max;
+        }
+      }
+      delete queryObj.priceRange; // Clean up after mapping
+    }
 
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
     return this;
   }
 
-  // sort() {
-  //   const sortBy = (this.query?.sortBy as string) || "createdAt";
-  //   const sortOrder = (this.query?.sortOrder as string) === "asc" ? 1 : -1;
-  //   this.modelQuery = this.modelQuery.sort({ [sortBy]: sortOrder });
-  //   return this;
-  // }
+  sort() {
+    const sortBy = (this.query?.sortBy as string) || "createdAt";
+    const sortOrder = (this.query?.sortOrder as string) === "asc" ? 1 : -1;
+    this.modelQuery = this.modelQuery.sort({ [sortBy]: sortOrder });
+    return this;
+  }
+
+  paginate() {
+    console.log(this.query)
+    const page = Number(this?.query?.page) || 1;
+    const limit = Number(this?.query?.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    this.modelQuery = this.modelQuery.skip(skip).limit(limit);
+
+    return this;
+  }
 }
 
 export default QueryBuilder;

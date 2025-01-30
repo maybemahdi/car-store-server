@@ -6,6 +6,7 @@ import OrderRoutes from "./app/modules/order/order.routes";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import AuthRoutes from "./app/modules/auth/auth.route";
+import UserRoutes from "./app/modules/user/user.route";
 
 const app: Application = express();
 
@@ -18,7 +19,7 @@ app.use(
       "http://localhost:5174",
       "https://car-shop-frontend-lilac.vercel.app",
     ], // Allow requests from your Vite app
-    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods if necessary
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], // Specify allowed methods if necessary
     credentials: true, // If you're using cookies or HTTP authentication
   }),
 );
@@ -34,6 +35,7 @@ app.get("/", getRoot);
 app.use("/api/cars", CarRoutes);
 app.use("/api/orders", OrderRoutes);
 app.use("/api/auth", AuthRoutes);
+app.use("/api/users", UserRoutes);
 
 // global error handler
 app.use(globalErrorHandler);
