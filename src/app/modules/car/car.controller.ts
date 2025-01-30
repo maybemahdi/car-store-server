@@ -140,20 +140,20 @@ const deleteCar = async (req: Request, res: Response) => {
     if (!result) {
       res.status(404).json({
         message: "No car found in database by this id",
-        status: false,
+        success: false,
         data: {},
       });
     }
     res.json({
       message: "Car deleted successfully",
-      status: true,
+      success: true,
       data: {},
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
       // handle known error types
       res.status(500).json({
-        message: error.message,
+        message: error?.message,
         success: false,
         error: error,
         stack: error.stack,

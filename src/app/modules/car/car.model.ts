@@ -27,6 +27,7 @@ const CarSchema: Schema = new Schema<ICar>(
       required: [true, "Quantity is Required"],
     },
     inStock: { type: Boolean, required: [true, "In Stock is Required"] },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

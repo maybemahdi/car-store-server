@@ -8,7 +8,7 @@ const createCarIntoDB = async (carData: ICar) => {
 };
 
 const getCarsFromDB = async (query: Record<string, unknown>) => {
-  const carsQuery = new QueryBuilder(Car.find(), query)
+  const carsQuery = new QueryBuilder(Car.find({ isDeleted: false }), query)
     .search(["brand", "model", "category", "availability"])
     .filter()
     .sort()
@@ -36,7 +36,11 @@ const updateCarInDB = async (carId: string, updateData: ICar) => {
 };
 
 const deleteCarInDB = async (carId: string) => {
-  const result = await Car.findByIdAndDelete(carId);
+  const result = await Car.findByIdAndUpdate(
+    carId,
+    { isDeleted: true },
+    { new: true },
+  );
   return result;
 };
 
