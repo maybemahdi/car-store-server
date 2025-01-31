@@ -5,7 +5,7 @@ const CarSchema: Schema = new Schema<ICar>(
   {
     brand: { type: String, required: [true, "Brand Name is Required"] },
     model: { type: String, required: [true, "Model Name is Required"] },
-    image: { type: String },
+    image: String,
     year: { type: Number, required: [true, "Year Field is Required"] },
     price: {
       type: Number,
@@ -15,7 +15,15 @@ const CarSchema: Schema = new Schema<ICar>(
     category: {
       type: String,
       enum: {
-        values: ["Sedan", "SUV", "Truck", "Coupe", "Convertible"],
+        values: [
+          "Sedan",
+          "SUV",
+          "Truck",
+          "Coupe",
+          "Convertible",
+          "Electric",
+          "Pickup Truck",
+        ],
         message: "{VALUE} is not a valid category",
       },
       required: [true, "Category is Required"],
@@ -32,23 +40,5 @@ const CarSchema: Schema = new Schema<ICar>(
   { timestamps: true },
 );
 
-CarSchema.set("toJSON", {
-  transform: (_doc, ret) => {
-    delete ret.__v;
-    return {
-      _id: ret._id,
-      brand: ret.brand,
-      model: ret.model,
-      year: ret.year,
-      price: ret.price,
-      category: ret.category,
-      description: ret.description,
-      quantity: ret.quantity,
-      inStock: ret.inStock,
-      createdAt: ret.createdAt,
-      updatedAt: ret.updatedAt,
-    };
-  },
-});
 
 export const Car = model<ICar>("Car", CarSchema);

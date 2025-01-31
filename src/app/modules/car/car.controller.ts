@@ -5,7 +5,7 @@ import { ICar } from "./car.interface";
 const createCar = async (req: Request, res: Response) => {
   try {
     const carData: ICar = req.body;
-    const result = await CarServices.createCarIntoDB(carData);
+    const result = await CarServices.createCarIntoDB(req.file, carData);
     res.json({
       message: "Car created successfully",
       success: true,
@@ -100,7 +100,11 @@ const updateCar = async (req: Request, res: Response) => {
   try {
     const { carId } = req.params;
     const updateData = req.body;
-    const result = await CarServices.updateCarInDB(carId, updateData);
+    const result = await CarServices.updateCarInDB(
+      carId,
+      updateData,
+      req?.file,
+    );
     if (!result) {
       res.status(404).json({
         message: "No Car found for this ID",
@@ -110,7 +114,7 @@ const updateCar = async (req: Request, res: Response) => {
     }
     res.json({
       message: "Car updated successfully",
-      status: true,
+      success: true,
       data: result,
     });
   } catch (error: unknown) {

@@ -1,9 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import QueryBuilder from "../../builder/QueryBuilder";
 import { ICar } from "./car.interface";
 import { Car } from "./car.model";
+import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 
-const createCarIntoDB = async (carData: ICar) => {
+const createCarIntoDB = async (file: any, carData: ICar) => {
+  const imageName = `${carData.year}${carData?.brand}${carData.quantity}`;
+  const { secure_url } = (await sendImageToCloudinary(
+    imageName,
+    file?.path,
+  )) as { secure_url: string };
   const result = await Car.create(carData);
+  result.image = secure_url;
+  await result.save();
   return result;
 };
 
@@ -23,15 +32,21 @@ const getSingleCarFromDB = async (carId: string) => {
   return result;
 };
 
-const updateCarInDB = async (carId: string, updateData: ICar) => {
-  const result = await Car.findByIdAndUpdate(
-    carId,
-    {
-      ...updateData,
-      inStock: updateData.quantity !== undefined && updateData.quantity > 0,
-    },
-    { new: true },
-  );
+const updateCarInDB = async (carId: string, updateData: Partial<ICar>, file?: any) => {
+  let secure_url;
+  if (file) {
+    const imageName = `${updateData.year || ''}${updateData?.brand || ''}${updateData.quantity || ''}`;
+    const response = await sendImageToCloudinary(imageName, file?.path);
+    secure_url = response.secure_url;
+  }
+
+  const updateFields = {
+    ...updateData,
+    ...(secure_url ? { image: secure_url } : {}),
+    ...(updateData?.quantity !== undefined && { inStock: updateData.quantity > 0 }),
+  };
+
+  const result = await Car.findByIdAndUpdate(carId, updateFields, { new: true });
   return result;
 };
 
